@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bs-primary: #3b82f6;
+  --bs-primary-rgb: 59, 130, 246;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.sidebar {
+  min-height: calc(100vh - 56px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
