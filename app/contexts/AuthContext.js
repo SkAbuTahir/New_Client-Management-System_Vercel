@@ -1,3 +1,5 @@
+
+
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react'
 
@@ -12,26 +14,31 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check for saved user data
-    const savedUser = localStorage?.getItem('user')
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
+    if (typeof window !== 'undefined') {
+      const savedUser = localStorage.getItem('user')
+      if (savedUser) {
+        setUser(JSON.parse(savedUser))
+      }
     }
     setLoading(false)
   }, [])
 
   const login = (userData) => {
     setUser(userData)
-    localStorage?.setItem('user', JSON.stringify(userData))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(userData))
+    }
   }
 
   const logout = () => {
     setUser(null)
-    localStorage?.removeItem('user')
-    localStorage?.removeItem('clients')
-    localStorage?.removeItem('communications')
-    localStorage?.removeItem('projects')
-    localStorage?.removeItem('invoices')
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user')
+      localStorage.removeItem('clients')
+      localStorage.removeItem('communications')
+      localStorage.removeItem('projects')
+      localStorage.removeItem('invoices')
+    }
   }
 
   const value = {
