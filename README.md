@@ -200,5 +200,5 @@ const [clients, setClients] = useApi('/api/clients')
 
 =======
 # New_Client-Management-System_Vercel
-Streamline your entire business workflow. Our intuitive dashboard offers real-time analytics. Manage client profiles, track project progress with visual indicators, log all communications, and generate professional invoices seamlessly. This all-in-one platform centralizes operations for maximum efficiency and growth.
+Streamline your entire business workflow. Here dashboard offers real-time analytics. Manage client profiles, track project progress with visual indicators, log all communications, and generate professional invoices seamlessly. This all-in-one platform centralizes operations for maximum efficiency and growth.
 >>>>>>> 6abb893f77f23a25d7b88c79dc11ce53499f371d
