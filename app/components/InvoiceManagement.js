@@ -88,7 +88,7 @@ export default function InvoiceManagement() {
   }
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this invoice?')) {
+    if (typeof window !== 'undefined' && window.confirm('Are you sure you want to delete this invoice?')) {
       setInvoices(invoices.filter(invoice => invoice.id !== id))
     }
   }

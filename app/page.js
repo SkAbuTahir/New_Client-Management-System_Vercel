@@ -35,10 +35,14 @@ import LoginForm from './components/LoginForm'
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard')
-  // const { user, loading } = useAuth()
-  const { user, loading, login, logout } = useAuth();
+  const [isClient, setIsClient] = useState(false)
+  const { user, loading } = useAuth()
 
-  if (loading) {
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient || loading) {
     return (
       <div className="min-vh-100 d-flex align-items-center justify-content-center">
         <div className="text-center">

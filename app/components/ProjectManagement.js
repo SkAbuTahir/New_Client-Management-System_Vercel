@@ -70,7 +70,7 @@ export default function ProjectManagement() {
   }
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
+    if (typeof window !== 'undefined' && window.confirm('Are you sure you want to delete this project?')) {
       setProjects(projects.filter(project => project.id !== id))
     }
   }

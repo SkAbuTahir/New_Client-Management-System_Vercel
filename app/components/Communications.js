@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { Container, Row, Col, Card, Button, Form, Table, Badge, InputGroup } from 'react-bootstrap'
+import { Container, Row, Col, Card, Button, Form, Table, Badge, InputGroup, Modal } from 'react-bootstrap'
 import { Plus, Search, MessageSquare, Phone, Mail, Calendar } from 'lucide-react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 
@@ -9,6 +9,7 @@ export default function Communications() {
   const [clients] = useLocalStorage('clients', [])
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState('All')
+  const [showModal, setShowModal] = useState(false)
   
   const [formData, setFormData] = useState({
     clientId: '',
@@ -19,6 +20,20 @@ export default function Communications() {
     date: new Date().toISOString().split('T')[0],
     followUpDate: ''
   })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const selectedClient = clients.find(c => c.id === parseInt(formData.clientId))
+    
+    const newCommunication = {
+      ...formData,
+      clientName: selectedClient?.name || '',
+      id: Date.now(),
+      createdAt: new Date().toISOString()
+    }
+    setCommunications([...communications, newCommunication])
+    resetForm()
+  }
 
   const resetForm = () => {
     setFormData({
@@ -156,6 +171,97 @@ export default function Communications() {
           )}
         </Card.Body>
       </Card>
+
+      {/* Communication Modal */}
+      <Modal show={showModal} onHide={resetForm} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Log Communication</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleSubmit}>
+          <Modal.Body>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Client *</Form.Label>
+                  <Form.Select
+                    required
+                    value={formData.clientId}
+                    onChange={(e) => setFormData({...formData, clientId: e.target.value})}
+                  >
+                    <option value="">Select a client</option>
+                    {clients.map(client => (
+                      <option key={client.id} value={client.id}>{client.name}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Type</Form.Label>
+                  <Form.Select
+                    value={formData.type}
+                    onChange={(e) => setFormData({...formData, type: e.target.value})}
+                  >
+                    <option value="Email">Email</option>
+                    <option value="Phone">Phone</option>
+                    <option value="Meeting">Meeting</option>
+                    <option value="SMS">SMS</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
+            <Form.Group className="mb-3">
+              <Form.Label>Subject *</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={formData.subject}
+                onChange={(e) => setFormData({...formData, subject: e.target.value})}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Notes</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={formData.notes}
+                onChange={(e) => setFormData({...formData, notes: e.target.value})}
+              />
+            </Form.Group>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Date *</Form.Label>
+                  <Form.Control
+                    type="date"
+                    required
+                    value={formData.date}
+                    onChange={(e) => setFormData({...formData, date: e.target.value})}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Follow Up Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={formData.followUpDate}
+                    onChange={(e) => setFormData({...formData, followUpDate: e.target.value})}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={resetForm}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit">
+              Log Communication
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </Container>
   )
 }

@@ -62,7 +62,7 @@ export default function ClientManagement() {
   }
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this client?')) {
+    if (typeof window !== 'undefined' && window.confirm('Are you sure you want to delete this client?')) {
       setClients(clients.filter(client => client.id !== id))
     }
   }
