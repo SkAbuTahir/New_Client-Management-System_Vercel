@@ -96,7 +96,7 @@ export default function MainApp() {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard />
+        return <Dashboard setActiveTab={setActiveTab} />
       case 'clients':
         return <ClientManagement />
       case 'communications':

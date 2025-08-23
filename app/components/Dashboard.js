@@ -4,7 +4,7 @@ import { Container, Row, Col, Card } from 'react-bootstrap'
 import { Users, MessageSquare, FolderOpen, DollarSign, TrendingUp, Calendar } from 'lucide-react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 
-export default function Dashboard() {
+export default function Dashboard({ setActiveTab }) {
   const [clients] = useLocalStorage('clients', [])
   const [communications] = useLocalStorage('communications', [])
   const [projects] = useLocalStorage('projects', [])
@@ -88,10 +88,10 @@ export default function Dashboard() {
             </Card.Header>
             <Card.Body>
               <div className="d-grid gap-2">
-                <button className="btn btn-outline-primary btn-sm">Add New Client</button>
-                <button className="btn btn-outline-success btn-sm">Log Communication</button>
-                <button className="btn btn-outline-warning btn-sm">Create Project</button>
-                <button className="btn btn-outline-info btn-sm">Generate Invoice</button>
+                <button className="btn btn-outline-primary btn-sm" onClick={() => setActiveTab('clients')}>Add New Client</button>
+                <button className="btn btn-outline-success btn-sm" onClick={() => setActiveTab('communications')}>Log Communication</button>
+                <button className="btn btn-outline-warning btn-sm" onClick={() => setActiveTab('projects')}>Create Project</button>
+                <button className="btn btn-outline-info btn-sm" onClick={() => setActiveTab('invoices')}>Generate Invoice</button>
               </div>
             </Card.Body>
           </Card>
