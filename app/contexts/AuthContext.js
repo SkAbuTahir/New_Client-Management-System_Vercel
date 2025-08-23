@@ -1,7 +1,6 @@
-
-
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 
 const AuthContext = createContext()
 
@@ -10,30 +9,20 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useLocalStorage('user', null) // ✅ using custom hook
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedUser = localStorage.getItem('user')
-      if (savedUser) {
-        setUser(JSON.parse(savedUser))
-      }
-    }
     setLoading(false)
   }, [])
 
   const login = (userData) => {
-    setUser(userData)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(userData))
-    }
+    setUser(userData) // ✅ automatically syncs with localStorage
   }
 
   const logout = () => {
     setUser(null)
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('user')
       localStorage.removeItem('clients')
       localStorage.removeItem('communications')
       localStorage.removeItem('projects')
