@@ -60,34 +60,55 @@ function useAuth() {
 }
 
 // Navigation Bar Component
-function NavigationBar({ user, logout }) {
+function NavigationBar({ user, logout, activeTab, setActiveTab }) {
+  const navItems = [
+    { key: 'dashboard', label: 'Dashboard' },
+    { key: 'clients', label: 'Clients' },
+    { key: 'communications', label: 'Communications' },
+    { key: 'projects', label: 'Projects' },
+    { key: 'invoices', label: 'Invoices' }
+  ]
+
   return (
     <Navbar className="bg-primary" variant="dark" expand="lg" style={{ padding: '0.5rem 1rem' }}>
       <Navbar.Brand href="/" className="fw-bold text-white">
         ClientPro
       </Navbar.Brand>
       
-      <Navbar.Toggle />
-      <Navbar.Collapse className="justify-content-end">
-        {user && (
-          <Dropdown align="end">
-            <Dropdown.Toggle variant="outline-light" id="user-dropdown">
-              <User size={18} className="me-2" />
-              {user.name}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item>
-                <Settings size={16} className="me-2" />
-                Settings
-              </Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Item onClick={logout}>
-                <LogOut size={16} className="me-2" />
-                Logout
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        )}
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav">
+        <Nav className="me-auto d-lg-none">
+          {navItems.map(({ key, label }) => (
+            <Nav.Link
+              key={key}
+              className={`text-white ${activeTab === key ? 'active' : ''}`}
+              onClick={() => setActiveTab(key)}
+            >
+              {label}
+            </Nav.Link>
+          ))}
+        </Nav>
+        <Nav className="ms-auto">
+          {user && (
+            <Dropdown align="end">
+              <Dropdown.Toggle variant="outline-light" id="user-dropdown">
+                <User size={18} className="me-2" />
+                {user.name}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item>
+                  <Settings size={16} className="me-2" />
+                  Settings
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={logout}>
+                  <LogOut size={16} className="me-2" />
+                  Logout
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
+        </Nav>
       </Navbar.Collapse>
     </Navbar>
   )
