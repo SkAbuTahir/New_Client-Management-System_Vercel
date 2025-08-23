@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Container, Row, Col } from 'react-bootstrap'
 import { Container, Row, Col, Nav, Navbar, Dropdown } from 'react-bootstrap'
 import { User, Settings, LogOut } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
@@ -116,7 +115,7 @@ export default function MainApp() {
           </Container>
         )
       default:
-        return <Dashboard />
+        return <Dashboard setActiveTab={setActiveTab} />
     }
   }
 
