@@ -1,204 +1,131 @@
+# ClientPro — Full-Stack CRM System
 
-# Client Management System (ClientPro)
+A production-ready client management system built with Next.js 14, Supabase (PostgreSQL), and NextAuth.js. Manage clients, projects, communications, and invoices — with a real-time KPI dashboard, PDF export, and transactional email.
 
-A comprehensive client management system built with Next.js, React Bootstrap, and Tailwind CSS, designed for deployment on Vercel.
+**[Live Demo](https://your-deployment.vercel.app) · [GitHub](https://github.com/your-username/clientpro)**
+
+---
 
 ## Features
 
-### 🏢 Core Features
-- **Client Database**: Add, edit, delete, and view client details with comprehensive information storage
-- **Communication Tracking**: Log meetings, emails, phone calls with follow-up reminders
-- **Project Management**: Assign clients to projects, track progress and deadlines
-- **Invoice Management**: Generate and track invoices with payment status monitoring
-- **Advanced Search & Filtering**: Find clients and records quickly with smart filters
-- **Analytics Dashboard**: Real-time insights into client metrics and business performance
+- **KPI Dashboard** — Revenue trend charts, invoice status breakdown, business health metrics, top clients by revenue, activity timeline
+- **Client Management** — Full CRUD with search, filter, and status tracking
+- **Project Management** — Progress tracking, priority levels, budget and timeline per project
+- **Communications** — Log emails, calls, meetings, SMS with follow-up dates
+- **Invoice Management** — Auto-numbered invoices, PDF export, email delivery via Resend, payment status tracking
+- **Authentication** — NextAuth.js with bcrypt-hashed passwords, JWT sessions, role-based access (Admin / Manager / Employee)
 
-### 🔐 Security & Authentication
-- Role-based access control (Admin, Manager, Employee)
-- Secure authentication system
-- Data encryption for sensitive information
+---
 
-### 📊 Dashboard & Analytics
-- Total and active client counts
-- Revenue tracking and analytics
-- Recent communication history
-- Project progress monitoring
-- Quick action buttons for common tasks
+## Tech Stack
 
-## Technology Stack
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Database | Supabase — PostgreSQL with RLS |
+| Auth | NextAuth.js — Credentials + JWT |
+| UI | React Bootstrap 5 + Tailwind CSS |
+| Charts | Recharts |
+| PDF Export | jsPDF |
+| Email | Resend |
+| Deployment | Vercel |
 
-- **Frontend**: Next.js 14, React 18
-- **UI Framework**: React Bootstrap 5.3.2
-- **Styling**: Tailwind CSS 3.3
-- **Icons**: Lucide React
-- **Deployment**: Vercel-ready configuration
-- **Data Storage**: Local storage (client-side) - easily replaceable with backend API
+---
 
-## Quick Start
+## Getting Started
 
-### 1. Installation
+### 1. Clone and install
 
 ```bash
-# Clone or create the project
-npx create-next-app@latest client-management-system
-cd client-management-system
-
-# Install dependencies
-npm install next react react-dom bootstrap react-bootstrap lucide-react date-fns
-npm install -D tailwindcss postcss autoprefixer eslint eslint-config-next
-
-# Initialize Tailwind CSS
-npx tailwindcss init -p
+git clone https://github.com/your-username/clientpro.git
+cd clientpro
+npm install
 ```
 
-### 2. Project Structure
+### 2. Set up environment variables
 
-```
-client-management-system/
-├── app/
-│   ├── components/
-│   │   ├── Navbar.js
-│   │   ├── Sidebar.js
-│   │   ├── Dashboard.js
-│   │   ├── ClientManagement.js
-│   │   ├── Communications.js
-│   │   ├── ProjectManagement.js
-│   │   ├── InvoiceManagement.js
-│   │   └── LoginForm.js
-│   ├── contexts/
-│   │   └── AuthContext.js
-│   ├── hooks/
-│   │   └── useLocalStorage.js
-│   ├── globals.css
-│   ├── layout.js
-│   └── page.js
-├── package.json
-├── tailwind.config.js
-├── postcss.config.js
-└── next.config.js
+Create a `.env.local` file:
+
+```env
+NEXTAUTH_SECRET=your-secret-here
+NEXTAUTH_URL=http://localhost:3000
+
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+RESEND_API_KEY=your-resend-api-key
+EMAIL_FROM=ClientPro <you@yourdomain.com>
 ```
 
-### 3. Demo Credentials
+### 3. Set up the database
 
-The system includes demo authentication with three role levels:
+Run `supabase/schema.sql` in your Supabase project:
 
-- **Admin**: `admin` / `admin123` (Full access)
-- **Manager**: `manager` / `manager123` (Management access)
-- **Employee**: `employee` / `employee123` (Limited access)
+> Supabase Dashboard → SQL Editor → New Query → paste and run
 
-### 4. Development
+### 4. Start the dev server
 
 ```bash
-# Start development server
 npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
 ```
 
+---
 
+## Demo Credentials
 
-## Key Components
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin` | `admin123` |
+| Manager | `manager` | `manager123` |
+| Employee | `employee` | `employee123` |
 
-### 🎯 Dashboard
-- Real-time statistics and KPIs
-- Recent activity feed
-- Quick action buttons
-- Revenue and client analytics
+---
 
-### 👥 Client Management
-- Complete client profiles with contact information
-- Status tracking (Active, Inactive, Pending)
-- Advanced search and filtering
-- Bulk operations support
+## Project Structure
 
-### 💬 Communications
-- Log all client interactions
-- Support for Email, Phone, Meeting, SMS
-- Follow-up date tracking
-- Communication history timeline
-
-### 📋 Project Management
-- Project assignment to clients
-- Progress tracking with visual indicators
-- Priority and status management
-- Budget and timeline tracking
-
-### 🧾 Invoice Management
-- Professional invoice generation
-- Payment status tracking
-- Revenue analytics
-- Automated invoice numbering
-
-## Customization
-
-### Adding New Features
-1. Create new components in `app/components/`
-2. Add navigation items in `Sidebar.js`
-3. Update the main page routing in `app/page.js`
-4. Extend local storage hooks as needed
-
-### Styling Customization
-- Modify `app/globals.css` for global styles
-- Update `tailwind.config.js` for theme customization
-- Bootstrap variables can be overridden in CSS
-
-### Data Integration
-Replace localStorage hooks with API calls:
-```javascript
-// Replace useLocalStorage with API hooks
-const [clients, setClients] = useApi('/api/clients')
+```
+app/
+├── api/
+│   ├── auth/               # NextAuth + register endpoints
+│   ├── clients/            # GET, POST, PUT, DELETE
+│   ├── projects/           # GET, POST, PUT, DELETE
+│   ├── communications/     # GET, POST, DELETE
+│   └── invoices/           # GET, POST, PUT, DELETE + send-email
+├── components/
+│   ├── Dashboard.js        # KPI dashboard with Recharts
+│   ├── ClientManagement.js
+│   ├── ProjectManagement.js
+│   ├── Communications.js
+│   ├── InvoiceManagement.js # PDF export + email send
+│   ├── LoginForm.js        # Login + Register tabs
+│   ├── Sidebar.js          # Collapsible, responsive
+│   ├── Navbar.js
+│   └── MainApp.js
+├── contexts/
+│   └── AuthContext.js      # NextAuth session wrapper
+├── hooks/
+│   └── useSupabase.js      # Data fetching hook (API → localStorage fallback)
+└── globals.css             # Design system
+lib/
+└── supabase/
+    ├── client.js           # Browser client (@supabase/ssr)
+    ├── server.js           # Server client (@supabase/ssr)
+    └── middleware.js       # Session refresh
+supabase/
+└── schema.sql              # Tables, RLS policies, triggers
 ```
 
-## Production Considerations
+---
 
-### Backend Integration
-- Replace localStorage with proper database (PostgreSQL, MongoDB)
-- Implement REST API or GraphQL endpoints
-- Add proper authentication and authorization
-- Set up data validation and sanitization
+## Deployment
 
-### Security Enhancements
-- Implement JWT tokens for authentication
-- Add CSRF protection
-- Enable HTTPS in production
-- Implement rate limiting
-- Add input validation and sanitization
+1. Push to GitHub
+2. Import project in [Vercel](https://vercel.com)
+3. Add all `.env.local` variables in Vercel → Project Settings → Environment Variables
+4. Deploy
 
-### Performance Optimization
-- Add pagination for large datasets
-- Implement caching strategies
-- Optimize images and assets
-- Add lazy loading for components
+---
 
-### Monitoring & Analytics
-- Integrate error tracking (Sentry)
-- Add performance monitoring
-- Implement user analytics
-- Set up logging and monitoring
+## Browser Support
 
-## Browser Compatibility
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-
-
-=======
-# New_Client-Management-System_Vercel
-Streamline your entire business workflow. Here dashboard offers real-time analytics. Manage client profiles, track project progress with visual indicators, log all communications, and generate professional invoices seamlessly. This all-in-one platform centralizes operations for maximum efficiency and growth.
->>>>>>> 6abb893f77f23a25d7b88c79dc11ce53499f371d
+Chrome · Firefox · Safari · Edge · iOS Safari · Chrome Mobile

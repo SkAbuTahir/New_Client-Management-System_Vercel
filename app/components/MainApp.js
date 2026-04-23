@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Container, Row, Col, Nav, Navbar, Dropdown } from 'react-bootstrap'
-import { User, Settings, LogOut } from 'lucide-react'
+import { Container } from 'react-bootstrap'
 import { useAuth } from '../contexts/AuthContext'
 import Sidebar from './Sidebar'
+import Navbar from './Navbar'
 import Dashboard from './Dashboard'
 import ClientManagement from './ClientManagement'
 import Communications from './Communications'
@@ -11,63 +11,24 @@ import ProjectManagement from './ProjectManagement'
 import InvoiceManagement from './InvoiceManagement'
 import LoginForm from './LoginForm'
 
-function NavigationBar({ user, logout, activeTab, setActiveTab }) {
-  const navItems = [
-    { key: 'dashboard', label: 'Dashboard' },
-    { key: 'clients', label: 'Clients' },
-    { key: 'communications', label: 'Communications' },
-    { key: 'projects', label: 'Projects' },
-    { key: 'invoices', label: 'Invoices' }
-  ]
-
-  return (
-    <Navbar className="bg-primary" variant="dark" expand="lg">
-      <Navbar.Brand className="fw-bold text-white">
-        ClientPro
-      </Navbar.Brand>
-      
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="me-auto d-lg-none">
-          {navItems.map(({ key, label }) => (
-            <Nav.Link
-              key={key}
-              className={`text-white ${activeTab === key ? 'active' : ''}`}
-              onClick={() => setActiveTab(key)}
-            >
-              {label}
-            </Nav.Link>
-          ))}
-        </Nav>
-        <Nav className="ms-auto">
-          {user && (
-            <Dropdown align="end">
-              <Dropdown.Toggle variant="outline-light" id="user-dropdown">
-                <User size={18} className="me-2" />
-                {user.name}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item>
-                  <Settings size={16} className="me-2" />
-                  Settings
-                </Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item onClick={logout}>
-                  <LogOut size={16} className="me-2" />
-                  Logout
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          )}
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
-  )
-}
-
 export default function MainApp() {
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [sidebarOpen, setSidebarOpen] = useState(false)      // mobile drawer
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false) // desktop collapse
   const { user, loading, logout } = useAuth()
+
+  // Close mobile drawer on tab change
+  const handleTabChange = (tab) => {
+    setActiveTab(tab)
+    setSidebarOpen(false)
+  }
+
+  // Close drawer on resize to desktop
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth >= 992) setSidebarOpen(false) }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -77,63 +38,69 @@ export default function MainApp() {
 
   if (loading) {
     return (
-      <div className="min-vh-100 d-flex align-items-center justify-content-center">
+      <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ background: '#f8fafc' }}>
         <div className="text-center">
-          <div className="spinner-border text-primary mb-3" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <p className="text-muted">Loading...</p>
+          <div className="spinner-border mb-3" role="status" style={{ color: '#4f46e5' }} />
+          <p className="text-muted text-sm">Loading…</p>
         </div>
       </div>
     )
   }
 
-  if (!user) {
-    return <LoginForm />
-  }
+  if (!user) return <LoginForm />
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard':
-        return <Dashboard setActiveTab={setActiveTab} />
-      case 'clients':
-        return <ClientManagement />
-      case 'communications':
-        return <Communications />
-      case 'projects':
-        return <ProjectManagement />
-      case 'invoices':
-        return <InvoiceManagement />
-      case 'settings':
-        return (
-          <Container fluid className="p-4">
-            <h2 className="fw-bold mb-4">Settings</h2>
-            <div className="alert alert-info">
-              <h5>Settings Panel</h5>
-              <p className="mb-0">Settings functionality can be implemented here.</p>
-            </div>
-          </Container>
-        )
-      default:
-        return <Dashboard setActiveTab={setActiveTab} />
+      case 'dashboard':      return <Dashboard setActiveTab={handleTabChange} />
+      case 'clients':        return <ClientManagement />
+      case 'communications': return <Communications />
+      case 'projects':       return <ProjectManagement />
+      case 'invoices':       return <InvoiceManagement />
+      case 'settings':       return (
+        <Container fluid className="p-4">
+          <h2 className="fw-700 mb-4" style={{ color: '#1e293b' }}>Settings</h2>
+          <div className="alert alert-info rounded-xl">Settings functionality coming soon.</div>
+        </Container>
+      )
+      default: return <Dashboard setActiveTab={handleTabChange} />
     }
   }
 
   return (
-    <div className="min-vh-100 bg-light">
-      <NavigationBar user={user} logout={logout} activeTab={activeTab} setActiveTab={setActiveTab} />
-      <Container fluid className="p-0">
-        <Row className="g-0">
-          <Col lg={2} className="d-none d-lg-block">
-            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-          </Col>
-          <Col lg={10}>
-            <main className="bg-white min-vh-100">
-              {renderContent()}
-            </main>
-          </Col>
-        </Row>
-      </Container>
+    <div className="min-vh-100" style={{ background: '#f8fafc' }}>
+      <Navbar
+        sidebarCollapsed={sidebarCollapsed}
+        onToggleMobile={() => setSidebarOpen(o => !o)}
+        onToggleDesktop={() => setSidebarCollapsed(c => !c)}
+      />
+
+      {/* Mobile overlay backdrop */}
+      {sidebarOpen && (
+        <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      <div className="d-flex" style={{ minHeight: 'calc(100vh - 56px)' }}>
+        {/* Sidebar */}
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={handleTabChange}
+          mobileOpen={sidebarOpen}
+          collapsed={sidebarCollapsed}
+          onClose={() => setSidebarOpen(false)}
+        />
+
+        {/* Main content */}
+        <main
+          className="flex-grow-1 overflow-auto"
+          style={{
+            background: '#f8fafc',
+            minHeight: 'calc(100vh - 56px)',
+            transition: 'margin-left 0.3s ease',
+          }}
+        >
+          {renderContent()}
+        </main>
+      </div>
     </div>
   )
 }

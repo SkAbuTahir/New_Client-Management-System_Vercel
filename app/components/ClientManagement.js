@@ -2,10 +2,10 @@
 import { useState } from 'react'
 import { Container, Row, Col, Card, Button, Form, Table, Modal, Badge, InputGroup } from 'react-bootstrap'
 import { Plus, Users, Search, Edit, Trash2, Eye, Phone, Mail, Building } from 'lucide-react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { useSupabase } from '../hooks/useSupabase'
 
 export default function ClientManagement() {
-  const [clients, setClients] = useLocalStorage('clients', [])
+  const [clients, setClients] = useSupabase('clients', [])
   const [showModal, setShowModal] = useState(false)
   const [editingClient, setEditingClient] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')

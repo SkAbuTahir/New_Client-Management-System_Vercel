@@ -1,6 +1,6 @@
 'use client'
-import { createContext, useContext, useState, useEffect } from 'react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { createContext, useContext } from 'react'
+import { useSession, signIn, signOut } from 'next-auth/react'
 
 const AuthContext = createContext()
 
@@ -9,36 +9,22 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useLocalStorage('user', null) // ✅ using custom hook
-  const [loading, setLoading] = useState(true)
+  const { data: session, status } = useSession()
 
-  useEffect(() => {
-    setLoading(false)
-  }, [])
-
-  const login = (userData) => {
-    setUser(userData) // ✅ automatically syncs with localStorage
+  const login = async ({ username, password }) => {
+    const result = await signIn('credentials', { username, password, redirect: false })
+    return result
   }
 
-  const logout = () => {
-    setUser(null)
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('clients')
-      localStorage.removeItem('communications')
-      localStorage.removeItem('projects')
-      localStorage.removeItem('invoices')
-    }
-  }
+  const logout = () => signOut({ callbackUrl: '/' })
 
-  const value = {
-    user,
-    login,
-    logout,
-    loading
-  }
+  // Map NextAuth session to the same shape the rest of the app expects
+  const user = session?.user
+    ? { name: session.user.name, email: session.user.email, username: session.user.username, role: session.user.role }
+    : null
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, login, logout, loading: status === 'loading' }}>
       {children}
     </AuthContext.Provider>
   )

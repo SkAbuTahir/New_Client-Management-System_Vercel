@@ -2,11 +2,11 @@
 import { useState } from 'react'
 import { Container, Row, Col, Card, Button, Form, Table, Badge, InputGroup, Modal } from 'react-bootstrap'
 import { Plus, Search, MessageSquare, Phone, Mail, Calendar } from 'lucide-react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { useSupabase } from '../hooks/useSupabase'
 
 export default function Communications() {
-  const [communications, setCommunications] = useLocalStorage('communications', [])
-  const [clients] = useLocalStorage('clients', [])
+  const [communications, setCommunications] = useSupabase('communications', [])
+  const [clients] = useSupabase('clients', [])
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState('All')
   const [showModal, setShowModal] = useState(false)

@@ -2,11 +2,11 @@
 import { useState } from 'react'
 import { Container, Row, Col, Card, Button, Form, Table, Modal, Badge, InputGroup, ProgressBar } from 'react-bootstrap'
 import { Plus, Search, FolderOpen, Calendar, User } from 'lucide-react'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { useSupabase } from '../hooks/useSupabase'
 
 export default function ProjectManagement() {
-  const [projects, setProjects] = useLocalStorage('projects', [])
-  const [clients] = useLocalStorage('clients', [])
+  const [projects, setProjects] = useSupabase('projects', [])
+  const [clients] = useSupabase('clients', [])
   const [showModal, setShowModal] = useState(false)
   const [editingProject, setEditingProject] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
