@@ -1,13 +1,7 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-import { readFileSync } from 'fs'
-import { join } from 'path'
-
-function getUsers() {
-  const filePath = join(process.cwd(), 'data', 'users.json')
-  return JSON.parse(readFileSync(filePath, 'utf-8'))
-}
+import { createClient } from '@/lib/supabase/server'
 
 export const authOptions = {
   providers: [
@@ -20,8 +14,13 @@ export const authOptions = {
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) return null
 
-        const users = getUsers()
-        const user = users.find(u => u.username === credentials.username)
+        const supabase = createClient()
+        const { data: user } = await supabase
+          .from('users')
+          .select('*')
+          .eq('username', credentials.username)
+          .single()
+
         if (!user) return null
 
         const valid = await bcrypt.compare(credentials.password, user.password)
@@ -45,9 +44,7 @@ export const authOptions = {
       return session
     }
   },
-  pages: {
-    signIn: '/'
-  },
+  pages: { signIn: '/' },
   session: { strategy: 'jwt' },
   secret: process.env.NEXTAUTH_SECRET
 }

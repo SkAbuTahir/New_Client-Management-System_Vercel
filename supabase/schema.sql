@@ -1,7 +1,24 @@
 -- ============================================================
 -- ClientPro — Supabase Schema
--- Run this in: Supabase Dashboard > SQL Editor > New Query
+-- Safe to re-run: drops existing policies before recreating
 -- ============================================================
+
+-- Users
+create table if not exists users (
+  id          bigserial primary key,
+  username    text        not null unique,
+  name        text        not null,
+  email       text        not null unique,
+  password    text        not null,
+  role        text        not null default 'Employee' check (role in ('Admin','Manager','Employee')),
+  created_at  timestamptz not null default now()
+);
+
+insert into users (username, name, email, password, role) values
+  ('admin',    'Admin User',    'admin@clientpro.com',    '$2b$10$/G6e7n0Ic49V2kjYOK2Lf.1vlcnz0elXAwo.KUHhqAFxsp4vVmbze', 'Admin'),
+  ('manager',  'Manager User',  'manager@clientpro.com',  '$2b$10$Xo5.CBmdDa8yLvlc4r7n3uaRCinoxAHOLD1oPjPx89CNHVtfhYcvi',  'Manager'),
+  ('employee', 'Employee User', 'employee@clientpro.com', '$2b$10$iI6JunHQqDGgCzOxmyKMJe5qwH5wcsHRW0ejG2XCE6RYL/Jmofo.6', 'Employee')
+on conflict (username) do nothing;
 
 -- Clients
 create table if not exists clients (
@@ -65,7 +82,7 @@ create table if not exists invoices (
   updated_at     timestamptz   not null default now()
 );
 
--- Auto-update updated_at trigger
+-- Auto-update updated_at
 create or replace function update_updated_at()
 returns trigger language plpgsql as $$
 begin new.updated_at = now(); return new; end;
@@ -76,12 +93,20 @@ create or replace trigger projects_updated_at before update on projects for each
 create or replace trigger invoices_updated_at before update on invoices for each row execute function update_updated_at();
 
 -- ── RLS ──────────────────────────────────────────────────────
--- Open policies for demo. In production: scope to auth.uid().
+alter table users          enable row level security;
 alter table clients        enable row level security;
 alter table projects       enable row level security;
 alter table communications enable row level security;
 alter table invoices       enable row level security;
 
+-- Drop existing policies before recreating
+drop policy if exists "allow_all_users"          on users;
+drop policy if exists "allow_all_clients"        on clients;
+drop policy if exists "allow_all_projects"       on projects;
+drop policy if exists "allow_all_communications" on communications;
+drop policy if exists "allow_all_invoices"       on invoices;
+
+create policy "allow_all_users"          on users          for all using (true) with check (true);
 create policy "allow_all_clients"        on clients        for all using (true) with check (true);
 create policy "allow_all_projects"       on projects       for all using (true) with check (true);
 create policy "allow_all_communications" on communications for all using (true) with check (true);
