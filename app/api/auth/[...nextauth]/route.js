@@ -3,6 +3,8 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { createClient } from '@/lib/supabase/server'
 
+export const runtime = 'nodejs'
+
 export const authOptions = {
   providers: [
     CredentialsProvider({

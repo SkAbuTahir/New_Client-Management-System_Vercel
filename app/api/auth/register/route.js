@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { createClient } from '@/lib/supabase/server'
 
+export const runtime = 'nodejs'
+
 export async function POST(req) {
   try {
     const { username, name, email, password, role } = await req.json()
